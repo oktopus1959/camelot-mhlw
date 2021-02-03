@@ -48,6 +48,7 @@ if [ "$url" ]; then
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
             echo "Data extracted: $OUTFILE"
             echo "$(date) -- extracted $today"
+            $BINDIR/commit-push.sh
             exit
         fi
     fi
