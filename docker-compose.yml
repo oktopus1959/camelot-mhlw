@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  camelot:
+    image: camelot-mhlw
+    build: .
+    volumes:
+      - ./mhlw_pdf:/mhlw_pdf
+    command: sh /root/latest_pdf_to_text.sh
