@@ -49,6 +49,10 @@ PDF_FILE|/mhlw_pdf/20210202.pdf
 
 テキストファイルをcsvなどに整形する方法については `tools/make_pref_data.rb` を参考にしてください。
 
+## PDFファイルの取得
+`tools/extract_today_pref_data.sh` を実行すると、厚労省サイトから(もし更新されていれば)当日分のPDFファイルをダウンロードして、テキスト抽出したファイルが作成されます。
+なお、月が変わったら、 `pageUrl` 変数を修正してください。
+
 ## 作者
 Twitter: [@oktopus59](https://twitter.com/oktopus59) (OKA Toshiyuki)
 
