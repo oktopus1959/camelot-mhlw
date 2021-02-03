@@ -44,7 +44,7 @@ if [ "$url" ]; then
     if [ "$pdfUrl" ]; then
         [[ "$pdfUrl" == /* ]] && pdfUrl="https://www.mhlw.go.jp$pdfUrl"
         RUN_CMD -m "curl $pdfUrl -o $pdfPath"
-        RUN_CMD -m "docker-compose run --rm camelot | tail -n +2 > $OUTFILE"
+        RUN_CMD -m "/usr/local/bin/docker-compose run --rm camelot | tail -n +2 > $OUTFILE"
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
             echo "Data extracted: $OUTFILE"
             echo "$(date) -- extracted $today"
