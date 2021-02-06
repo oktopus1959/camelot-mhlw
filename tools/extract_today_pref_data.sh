@@ -47,8 +47,8 @@ if [ "$url" ]; then
         RUN_CMD -m "/usr/local/bin/docker-compose run --rm camelot | tail -n +2 > $OUTFILE"
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
             echo "Data extracted: $OUTFILE"
-            echo "$(date) -- extracted $today"
             $BINDIR/commit-push.sh
+            echo "$(date) -- extracted $today"
             exit
         fi
     fi
