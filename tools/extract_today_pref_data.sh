@@ -9,6 +9,10 @@ if [ "$1" == "-d" ]; then
     shift 2
 fi
 
+if [ "$1" == "-f" -o "$1" == "--force" ]; then
+    force=1
+fi
+
 #pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00210.html"
 pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00231.html"
 year=$(eval "date $dateOpt '+%Y'")
@@ -31,7 +35,7 @@ echo "$(date) -- check $today"
 
 OUTFILE=mhlw_pref/$yesterday.txt
 
-if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
+if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
     echo "Already extracted: $OUTFILE"
     exit
 fi
