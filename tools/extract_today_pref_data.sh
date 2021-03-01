@@ -14,7 +14,8 @@ if [ "$1" == "-f" -o "$1" == "--force" ]; then
 fi
 
 #pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00210.html"
-pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00231.html"
+#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00231.html"
+pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00244.html"
 year=$(eval "date $dateOpt '+%Y'")
 reiwa=$(( $year - 2018))
 today=$(eval "date $dateOpt '+%-m月%-d日'")
