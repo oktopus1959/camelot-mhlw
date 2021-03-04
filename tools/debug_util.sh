@@ -203,10 +203,11 @@ VAR_PRINT() {
 }
 
 # RUN_CMD
-    RUN_CMD() {
+RUN_CMD() {
     local dryrun=$__DRYRUN
     local nomsg=$__NOMSGRUN
     local bgrun=0
+    local yellow=0
     local direct=0
     local prefix='RUN'
     local cmdline=''
@@ -219,6 +220,7 @@ VAR_PRINT() {
           -f* ) dryrun=0 ;;       # DRYRUNモードであっても強制的に実行する
           -n* ) nomsg=1 ;;        # DEBUGモード場合にかぎり、コマンドラインエコーを行う
           -b* ) bgrun=1 ;;        # バックグラウンドで実行
+          -y* ) yellow=1 ;;       # 黄色表示
           -d* ) direct=1 ;;       # 赤色表示なし
         esac
         shift
@@ -247,6 +249,11 @@ VAR_PRINT() {
           eval "$cmdline" &
         elif [ $direct -eq 1 ]; then
           eval "$cmdline"
+        elif [ $yellow -eq 1 ]; then
+          local __yellow_pattern="$__YELLOW_PATTERN"
+          __YELLOW_PATTERN=.
+          eval "$cmdline" 2> >(RED_PRINT)
+          __YELLOW_PATTERN="__yellow_pattern"
         else
           eval "$cmdline" 2> >(RED_PRINT)
         fi

@@ -13,13 +13,15 @@ if [ "$1" == "-f" -o "$1" == "--force" ]; then
     force=1
 fi
 
+#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00202.html"
+#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00204.html"
 #pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00210.html"
 #pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00231.html"
 pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00244.html"
 year=$(eval "date $dateOpt '+%Y'")
 reiwa=$(( $year - 2018))
 today=$(eval "date $dateOpt '+%-m月%-d日'")
-
+day=$(eval "date $dateOpt '+%-d'")
 
 datestr=$(eval "date $dateOpt +'%Y%m%d'")
 yesterday=$(date --date "$datestr yesterday" '+%Y%m%d')
@@ -43,7 +45,9 @@ if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
     exit
 fi
 
-url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和${reiwa}年$today' | cut -d'\"' -f2")
+#reiwa_pat="["${reiwa}$(echo $reiwa | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"]"
+#url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和${reiwa_pat}年$today' | cut -d'\"' -f2")
+url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和.*年.*月${day}日' | cut -d'\"' -f2")
 VAR_PRINT -f url
 if [ "$url" ]; then
     #pdfUrl=$(RUN_CMD -f "curl $url 2>/dev/null | \
@@ -53,7 +57,8 @@ if [ "$url" ]; then
     VAR_PRINT -f pdfUrl
     if [ "$pdfUrl" ]; then
         [[ "$pdfUrl" == /* ]] && pdfUrl="https://www.mhlw.go.jp$pdfUrl"
-        RUN_CMD -fm "curl $pdfUrl -o $pdfPath"
+        RUN_CMD -fm "mkdir -p mhlw_pdf mhlw_pref"
+        RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath"
         RUN_CMD -fm "/usr/local/bin/docker-compose run --rm camelot | \
             sed -ne '2,/^合計/ s/ *//gp' | sed -re 's/\r//' > $OUTFILE"
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
