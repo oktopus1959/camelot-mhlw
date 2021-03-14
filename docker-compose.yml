@@ -6,4 +6,5 @@ services:
     build: .
     volumes:
       - ./mhlw_pdf:/mhlw_pdf
+      - ./work_pdf:/work_pdf
     command: sh /root/latest_pdf_to_text.sh
