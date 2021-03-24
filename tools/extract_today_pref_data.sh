@@ -58,7 +58,7 @@ if [ "$url" ]; then
     if [ "$pdfUrl" ]; then
         [[ "$pdfUrl" == /* ]] && pdfUrl="https://www.mhlw.go.jp$pdfUrl"
         RUN_CMD -fm "mkdir -p mhlw_pdf mhlw_pref"
-        RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath"
+        RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath 2>/dev/null"
         RUN_CMD -fm "/usr/local/bin/docker-compose run --rm camelot | \
             sed -ne '2,/^合計/ s/ *//gp' | sed -re 's/\r//' > $OUTFILE"
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then

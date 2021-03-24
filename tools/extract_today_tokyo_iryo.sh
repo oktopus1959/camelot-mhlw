@@ -31,7 +31,7 @@ if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
 fi
 
 RUN_CMD -fm "mkdir -p work_pdf work_tokyo"
-RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath"
+RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath 2>/dev/null"
 fileSize=$(wc -c < $pdfPath)
 if [ -f $pdfPath ] && [ $fileSize -gt 10000 ] && ! grep '404 Not Found' $pdfPath ; then
     RUN_CMD -fm "/usr/local/bin/docker-compose \
