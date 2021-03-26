@@ -16,8 +16,8 @@ fi
 
 todayYYMMDD=$(eval "date --date '$myDt + 2018 years ago' +'%y%m%d'")
 today=$(eval "date --date $myDt '+%Y%m%d'")
-pdfUrl1="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuhou.pdf"
-pdfUrl2="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuho.pdf"
+pdfUrl1="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuho.pdf"
+pdfUrl2="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuhou.pdf"
 pdfPath=work_pdf/tokyo_sokuhou_$today.pdf
 OUTFILE=work_tokyo/tokyo_sokuhou_$today.txt
 
@@ -32,14 +32,27 @@ if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
     exit
 fi
 
+pdfFound() {
+    local result="NG"
+    if [ -f $pdfPath ]; then
+        local fileSize=$(wc -c < $pdfPath)
+        if [ $fileSize -gt 10000 ] && ! grep '404 Not Found' $pdfPath ; then
+            result="OK"
+        fi
+    fi
+    echo "$result"
+}
+
 RUN_CMD -fm "mkdir -p work_pdf work_tokyo"
 RUN_CMD -fm -y "curl $pdfUrl1 -o $pdfPath 2>/dev/null"
-if grep '404 Not Found' $pdfPath > /dev/null; then
+pdfResult="$(pdfFound)"
+
+if [ "$pdfResult" != "OK" ]; then
     RUN_CMD -fm -y "curl $pdfUrl2 -o $pdfPath 2>/dev/null"
+    pdfResult="$(pdfFound)"
 fi
 
-fileSize=$(wc -c < $pdfPath)
-if [ -f $pdfPath ] && [ $fileSize -gt 10000 ] && ! grep '404 Not Found' $pdfPath ; then
+if [ "$pdfResult" == "OK" ]; then
     RUN_CMD -fm "/usr/local/bin/docker-compose \
         run --rm camelot python /root/mhlw_pref_pdf_to_text.py /$pdfPath > $OUTFILE"
     if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
