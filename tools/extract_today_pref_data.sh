@@ -55,6 +55,10 @@ if [ "$url" ]; then
     pdfUrl=$(RUN_CMD -f "curl $url 2>/dev/null | \
         grep -m 1 'content/[0-9/]*\.pdf.*各都道府県の検査陽性者の状況' | cut -d'\"' -f2")
     VAR_PRINT -f pdfUrl
+    if [ -z "$pdfUrl" ]; then
+        pdfUrl=$(RUN_CMD -f "wget -q -O - $url 2>/dev/null | \
+            grep -m 1 'content/[0-9/]*\.pdf.*各都道府県の検査陽性者の状況' | cut -d'\"' -f2")
+    fi
     if [ "$pdfUrl" ]; then
         [[ "$pdfUrl" == /* ]] && pdfUrl="https://www.mhlw.go.jp$pdfUrl"
         RUN_CMD -fm "mkdir -p mhlw_pdf mhlw_pref"
