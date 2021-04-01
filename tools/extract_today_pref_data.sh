@@ -48,7 +48,7 @@ getMonthlyPageUrl() {
     local monthPat="${month}|$(echo $month | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"
     local url=$(RUN_CMD -f \
         "curl $rootUrl 2>/dev/null | grep -A1 '\b$year年\b' | grep -E -m 1 '>($monthPat)月<' | \
-         sed -r 's/.*(https:[^\">]*\.html).*/\1/'")
+         sed -r 's/.*(https:[^\">]*\.html).>($monthPat)月<.*/\1/'")
 
     echo $url
 }
@@ -82,7 +82,7 @@ if [ "$url" ]; then
             sed -ne '2,/^合計/ s/ *//gp' | sed -re 's/\r//' > $OUTFILE"
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
             echo "Data extracted: $OUTFILE"
-            RUN_CMD -m "$BINDIR/commit-push.sh"
+            RUN_CMD -m -y "$BINDIR/commit-push.sh"
             echo "$(date) -- extracted $today"
             exit
         fi
