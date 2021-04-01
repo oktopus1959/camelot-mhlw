@@ -13,11 +13,6 @@ if [ "$1" == "-f" -o "$1" == "--force" ]; then
     force=1
 fi
 
-#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00202.html"
-#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00204.html"
-#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00210.html"
-#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00231.html"
-pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00244.html"
 year=$(eval "date $dateOpt '+%Y'")
 reiwa=$(( $year - 2018))
 today=$(eval "date $dateOpt '+%-m月%-d日'")
@@ -42,6 +37,26 @@ VAR_PRINT OUTFILE
 
 if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
     echo "Already extracted: $OUTFILE"
+    exit
+fi
+
+getMonthlyPageUrl() {
+    local rootUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00086.html"
+
+    local year=$(eval "date $dateOpt '+%Y'")
+    local month=$(eval "date $dateOpt '+%-m'")
+    local monthPat="${month}|$(echo $month | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"
+    local url=$(RUN_CMD -f \
+        "curl $rootUrl 2>/dev/null | grep -A1 '\b$year年\b' | grep -E -m 1 '>($monthPat)月<' | \
+         sed -r 's/.*(https:[^\">]*\.html).*/\1/'")
+
+    echo $url
+}
+
+pageUrl=$(getMonthlyPageUrl)
+VAR_PRINT pageUrl
+if [ -z "$pageUrl" ]; then
+    echo "Can't get monthly page url." >&2
     exit
 fi
 
