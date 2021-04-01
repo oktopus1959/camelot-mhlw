@@ -41,18 +41,24 @@ if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
 fi
 
 getMonthlyPageUrl() {
-    local rootUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00086.html"
+    local url
+    if [ -f $BINDIR/mhlw_monthly_page_url.txt ]; then
+        url=$(RUN_CMD -f "cat $BINDIR/mhlw_monthly_page_url.txt")
+    fi
+    if [ -z "$url" ]; then
+        local rootUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00086.html"
 
-    local year=$(eval "date $dateOpt '+%Y'")
-    local month=$(eval "date $dateOpt '+%-m'")
-    local monthPat="${month}|$(echo $month | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"
-    local url=$(RUN_CMD -f \
-        "curl $rootUrl 2>/dev/null | grep -A1 '\b$year年\b' | grep -E -m 1 '>($monthPat)月<' | \
-         sed -r 's/.*(https:[^\">]*\.html).>($monthPat)月<.*/\1/'")
-
+        local year=$(eval "date $dateOpt '+%Y'")
+        local month=$(eval "date $dateOpt '+%-m'")
+        local monthPat="${month}|$(echo $month | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"
+        local url=$(RUN_CMD -f \
+            "curl $rootUrl 2>/dev/null | grep -A1 '\b$year年\b' | grep -E -m 1 '>($monthPat)月<' | \
+             sed -r 's/.*(https:[^\">]*\.html).>($monthPat)月<.*/\1/'")
+    fi
     echo $url
 }
 
+#pageUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00254.html"
 pageUrl=$(getMonthlyPageUrl)
 VAR_PRINT pageUrl
 if [ -z "$pageUrl" ]; then
