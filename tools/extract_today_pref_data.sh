@@ -42,8 +42,8 @@ fi
 
 getMonthlyPageUrl() {
     local url
-    if [ -f $BINDIR/mhlw_monthly_page_url.txt ]; then
-        url=$(RUN_CMD -f "cat $BINDIR/mhlw_monthly_page_url.txt")
+    if [ -f mhlw_monthly_page_url.txt ]; then
+        url=$(RUN_CMD -f "cat mhlw_monthly_page_url.txt")
     fi
     if [ -z "$url" ]; then
         local rootUrl="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000121431_00086.html"
@@ -54,6 +54,7 @@ getMonthlyPageUrl() {
         local url=$(RUN_CMD -f \
             "curl $rootUrl 2>/dev/null | grep -A1 '\b$year年\b' | grep -E -m 1 '>($monthPat)月<' | \
              sed -r 's/.*(https:[^\">]*\.html).>($monthPat)月<.*/\1/'")
+        [ "$url" ] && RUN_CMD -fm "echo '$url' > mhlw_monthly_page_url.txt"
     fi
     echo $url
 }
