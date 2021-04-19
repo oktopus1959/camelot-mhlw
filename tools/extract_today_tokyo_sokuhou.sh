@@ -15,9 +15,12 @@ if [ "$1" == "-f" -o "$1" == "--force" ]; then
 fi
 
 todayYYMMDD=$(eval "date --date '$myDt + 2018 years ago' +'%y%m%d'")
+todayMMDD=$(eval "date --date '$myDt' +'%m%d'")
 today=$(eval "date --date $myDt '+%Y%m%d'")
-pdfUrl1="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuho.pdf"
+pdfUrl1="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayMMDD}sokuhou.pdf"
 pdfUrl2="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuhou.pdf"
+pdfUrl3="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayMMDD}sokuho.pdf"
+pdfUrl4="https://www.fukushihoken.metro.tokyo.lg.jp/index.files/${todayYYMMDD}sokuho.pdf"
 pdfPath=work_pdf/tokyo_sokuhou_$today.pdf
 OUTFILE=work_tokyo/tokyo_sokuhou_$today.txt
 
@@ -49,6 +52,16 @@ pdfResult="$(pdfFound)"
 
 if [ "$pdfResult" != "OK" ]; then
     RUN_CMD -fm -y "curl $pdfUrl2 -o $pdfPath 2>/dev/null"
+    pdfResult="$(pdfFound)"
+fi
+
+if [ "$pdfResult" != "OK" ]; then
+    RUN_CMD -fm -y "curl $pdfUrl3 -o $pdfPath 2>/dev/null"
+    pdfResult="$(pdfFound)"
+fi
+
+if [ "$pdfResult" != "OK" ]; then
+    RUN_CMD -fm -y "curl $pdfUrl4 -o $pdfPath 2>/dev/null"
     pdfResult="$(pdfFound)"
 fi
 
