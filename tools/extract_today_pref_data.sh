@@ -4,19 +4,19 @@ BINDIR=$(dirname $0)
 
 . $BINDIR/debug_util.sh
 
-if [ "$1" == "-d" ]; then
-    dateOpt="--date '$2'"
-    shift 2
-fi
-
-if [ "$1" == "-f" -o "$1" == "--force" ]; then
-    force=1
-fi
+while [ "$1" ]; do
+    case "$1" in
+        -d) shift; dateOpt="--date '$1'";;
+        -*day) shift; day="$1";;
+        -f|--force) force=1;;
+    esac
+    shift
+done
 
 year=$(eval "date $dateOpt '+%Y'")
 reiwa=$(( $year - 2018))
 today=$(eval "date $dateOpt '+%-m月%-d日'")
-day=$(eval "date $dateOpt '+%-d'")
+[ "$day" ] || day=$(eval "date $dateOpt '+%-d'")
 
 datestr=$(eval "date $dateOpt +'%Y%m%d'")
 yesterday=$(date --date "$datestr yesterday" '+%Y%m%d')
