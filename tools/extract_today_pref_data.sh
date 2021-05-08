@@ -72,6 +72,9 @@ fi
 url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和.*年.*月${day}日' | cut -d'\"' -f2")
 VAR_PRINT -f url
 if [ "$url" ]; then
+    if [[ "$url" == /* ]]; then
+        url="https://www.mhlw.go.jp$url"
+    fi
     #pdfUrl=$(RUN_CMD -f "curl $url 2>/dev/null | \
     #    grep -m 1 '都道府県別のPCR検査陽性者数.*${year}年$today' | cut -d'\"' -f2")
     pdfUrl=$(RUN_CMD -f "curl $url 2>/dev/null | \
