@@ -69,7 +69,8 @@ fi
 
 #reiwa_pat="["${reiwa}$(echo $reiwa | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"]"
 #url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和${reiwa_pat}年$today' | cut -d'\"' -f2")
-url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和.*年.*月${day}日' | cut -d'\"' -f2")
+#url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和.*年.*月${day}日' | cut -d'\"' -f2")
+url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep '厚生労働省の対応について.*令和' | ruby tools/zen2han.rb | grep -m 1 '令和.*年.*月${day}日' | cut -d'\"' -f2")
 VAR_PRINT -f url
 if [ "$url" ]; then
     if [[ "$url" == /* ]]; then
@@ -88,7 +89,7 @@ if [ "$url" ]; then
         [[ "$pdfUrl" == /* ]] && pdfUrl="https://www.mhlw.go.jp$pdfUrl"
         RUN_CMD -fm "mkdir -p mhlw_pdf mhlw_pref"
         RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath 2>/dev/null"
-        RUN_CMD -fm "/usr/local/bin/docker-compose run --rm camelot | \
+        RUN_CMD -fm "sudo docker-compose run --rm camelot | \
             sed -ne '2,/^合計/ s/ *//gp' | sed -re 's/\r//' > $OUTFILE"
         if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
             echo "Data extracted: $OUTFILE"
