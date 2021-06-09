@@ -34,7 +34,7 @@ RUN_CMD -fm "mkdir -p work_pdf work_tokyo"
 RUN_CMD -fm -y "curl $pdfUrl -o $pdfPath 2>/dev/null"
 fileSize=$(wc -c < $pdfPath)
 if [ -f $pdfPath ] && [ $fileSize -gt 10000 ] && ! grep '404 Not Found' $pdfPath ; then
-    RUN_CMD -fm "/usr/local/bin/docker-compose \
+    RUN_CMD -fm "sudo docker-compose \
         run --rm camelot python /root/mhlw_pref_pdf_to_text.py /$pdfPath > $OUTFILE"
     if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
         echo "Data extracted: $OUTFILE"
