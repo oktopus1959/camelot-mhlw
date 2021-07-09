@@ -15,8 +15,10 @@ fi
 
 todayMMDD=$(eval "date $dateOpt '+%m%d'")
 today=$(eval "date $dateOpt '+%Y%m%d'")
-pdfUrl1="https://www.fukushihoken.metro.tokyo.lg.jp/iryo/kansen/kunishihyou.files/${todayMMDD}.pdf"
-pdfUrl2="https://www.fukushihoken.metro.tokyo.lg.jp/iryo/kansen/kunishihyou.files/kuni${todayMMDD}.pdf"
+pdfUrl1="https://www.fukushihoken.metro.tokyo.lg.jp/iryo/kansen/corona_portal/info/kunishihyou.files/kuni${todayMMDD}.pdf"
+pdfUrl2="https://www.fukushihoken.metro.tokyo.lg.jp/iryo/kansen/corona_portal/info/kunishihyou.files/${todayMMDD}.pdf"
+pdfUrl3="https://www.fukushihoken.metro.tokyo.lg.jp/iryo/kansen/kunishihyou.files/kuni${todayMMDD}.pdf"
+pdfUrl4="https://www.fukushihoken.metro.tokyo.lg.jp/iryo/kansen/kunishihyou.files/${todayMMDD}.pdf"
 pdfPath=work_pdf/tokyo_iryo_$today.pdf
 pdfPathRemote=${pdfPath/work/tokyo}
 OUTFILE=work_tokyo/tokyo_iryo_$today.txt
@@ -38,6 +40,14 @@ RUN_CMD -fm -y "curl $pdfUrl1 -o $pdfPath 2>/dev/null"
 fileSize=$(wc -c < $pdfPath)
 if [ ! -f $pdfPath ] || [ $fileSize -lt 10000 ] || grep '404 Not Found' $pdfPath ; then
     RUN_CMD -fm -y "curl $pdfUrl2 -o $pdfPath 2>/dev/null"
+    fileSize=$(wc -c < $pdfPath)
+fi
+if [ ! -f $pdfPath ] || [ $fileSize -lt 10000 ] || grep '404 Not Found' $pdfPath ; then
+    RUN_CMD -fm -y "curl $pdfUrl3 -o $pdfPath 2>/dev/null"
+    fileSize=$(wc -c < $pdfPath)
+fi
+if [ ! -f $pdfPath ] || [ $fileSize -lt 10000 ] || grep '404 Not Found' $pdfPath ; then
+    RUN_CMD -fm -y "curl $pdfUrl4 -o $pdfPath 2>/dev/null"
     fileSize=$(wc -c < $pdfPath)
 fi
 if [ -f $pdfPath ] && [ $fileSize -gt 10000 ] && ! grep '404 Not Found' $pdfPath ; then
