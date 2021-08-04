@@ -70,7 +70,7 @@ fi
 #reiwa_pat="["${reiwa}$(echo $reiwa | ruby -ne 'puts $_.strip.tr("0123456789", "０１２３４５６７８９")')"]"
 #url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和${reiwa_pat}年$today' | cut -d'\"' -f2")
 #url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -m 1 '厚生労働省の対応について.*令和.*年.*月${day}日' | cut -d'\"' -f2")
-url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep '厚生労働省の対応について.*令和' | ruby tools/zen2han.rb | grep -m 1 '令和.*年.*月${day}日' | cut -d'\"' -f2")
+url=$(RUN_CMD -f "curl $pageUrl 2>/dev/null | grep -B1 '厚生労働省の対応について.*令和' | ruby tools/zen2han.rb | egrep -m 1 -B1 '令和.*年.*月${day}日' | sed -rn 's/.*<a href=\"([^\"]+)\">.*/\1/p'")
 VAR_PRINT -f url
 if [ "$url" ]; then
     if [[ "$url" == /* ]]; then
