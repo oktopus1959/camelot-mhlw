@@ -45,8 +45,11 @@ if [ -z "$force" ] && [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
 fi
 
 RUN_CMD -fm "mkdir -p work_pdf work_tokyo"
-RUN_CMD -fm -y "curl $pdfUrl0 -o $pdfPath 2>/dev/null"
-fileSize=$(wc -c < $pdfPath)
+fileSize=0
+if [ "$pdfUrl0" ]; then
+    RUN_CMD -fm -y "curl $pdfUrl0 -o $pdfPath 2>/dev/null"
+    fileSize=$(wc -c < $pdfPath)
+fi
 if [ ! -f $pdfPath ] || [ $fileSize -lt 10000 ] || grep '404 Not Found' $pdfPath ; then
     RUN_CMD -fm -y "curl $pdfUrl11 -o $pdfPath 2>/dev/null"
     fileSize=$(wc -c < $pdfPath)
