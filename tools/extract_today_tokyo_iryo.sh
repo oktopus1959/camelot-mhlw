@@ -77,7 +77,7 @@ fi
 if [ -f $pdfPath ] && [ $fileSize -gt 10000 ] && ! grep '404 Not Found' $pdfPath ; then
     # RUN_CMD -fm "sudo docker-compose run --rm camelot python /root/mhlw_pref_pdf_to_text.py /$pdfPath > $OUTFILE"
     RUN_CMD -fm "cat $pdfPath | ssh 192.168.1.162 'cat > $pdfPathRemote; pdf2txt.py $pdfPathRemote' | \
-        sed -rn 's/^（([0-9,]*)人\/1,207床）.*$/\1/p' | sed -r 's/,//g' | head -1 > $OUTFILE"
+        sed -rn 's/[ 　]*([0-9,]*)[ 　]*人[ 　]*\/[ 　]*1,468[ 　]*床.*$/\1/p' | sed -r 's/,//g' | head -1 > $OUTFILE"
 
     if [ -f $OUTFILE ] && [ -s $OUTFILE ]; then
         echo "Data extracted: $OUTFILE"
